@@ -58,6 +58,20 @@ class BreezeInstallCommand extends Command
     protected $controllerNamespace;
 
     /**
+     * The fully-qualified namespace of the model for registration.
+     *
+     * @var string
+     */
+    protected $modelNamespace;
+
+    /**
+     * The short name of the model for registration.
+     *
+     * @var string
+     */
+    protected $modelName;
+
+    /**
      * The request save path.
      *
      * @var string
@@ -124,7 +138,10 @@ class BreezeInstallCommand extends Command
      */
     public function handle()
     {
-        $this->setProperties();
+        if (!$this->setProperties()){
+            return 1;
+        }
+
         $this->generateControllers();
         $this->generateRequests();
         $this->generateRoutes();
@@ -146,6 +163,35 @@ class BreezeInstallCommand extends Command
     {
         $this->guardName = $this->argument('guard');
         $this->brokerName = $this->argument('passwords');
+
+        // Do not proceed if the guard/password broker is not defined.
+        if (
+            is_null(config('auth.guards.'.$this->guardName)) ||
+            is_null(config('auth.passwords.'.$this->brokerName))
+        ){
+            $this->warn(sprintf(
+                'We could not find the config for guard "%s" or the password broker "%s"',
+                $this->guardName,
+                $this->brokerName
+            ));
+
+            $this->line('Please update your "auth.php" file before continuing. ');
+
+            return false;
+        }
+
+        $guardProvider = config(sprintf('auth.guards.%s.provider', $this->guardName));
+        $model = config(sprintf('auth.providers.%s.model', $guardProvider));
+
+        if (is_null($model)){
+            $this->warn('Guard config does not have a valud model. ');
+            $this->line('Breeze-X currently only supports Eloquent');
+            return false;
+        }
+
+        $this->modelNamespace = $model;
+        $parts = explode('\\', $model);
+        $this->modelName = array_pop($parts);
 
         $this->controllerNamespace = ($this->guardName === 'web')
             ? 'App\Http\Controllers\Auth'
@@ -182,6 +228,8 @@ class BreezeInstallCommand extends Command
         $this->routeGuestGuardName = ($this->guardName === 'web')
             ? ''
             : sprintf(':%s', $this->guardName);
+
+        return true;
     }
 
     /**
@@ -277,6 +325,9 @@ class BreezeInstallCommand extends Command
             'DummyRouteGuestMiddlewareGuard',
             'DummyViewPathPrefix',
             'DummyViewPrefix',
+            'DummyModelNamespace',
+            'DummyModel',
+            'DummyModelTable',
         ], [
             $this->guardName,
             $this->brokerName,
@@ -287,6 +338,9 @@ class BreezeInstallCommand extends Command
             $this->routeGuestGuardName,
             $this->viewsPath,
             $this->viewsPrefix,
+            $this->modelNamespace,
+            $this->modelName,
+            Str::snake(Str::pluralStudly($this->modelName)),
         ], $contents);
     }
 
