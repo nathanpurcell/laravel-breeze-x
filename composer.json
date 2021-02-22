@@ -2,6 +2,7 @@
     "name": "purcell/breeze-x",
     "description": "A helper command to scaffold multiple authentication guards on your Laravel project",
     "type": "project",
+    "license": "MIT",
     "authors": [
         {
             "name": "Nathan Purcell",
