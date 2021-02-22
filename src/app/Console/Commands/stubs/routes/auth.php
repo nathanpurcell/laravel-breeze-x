@@ -15,12 +15,14 @@ Route::prefix('DummyRoutePrefix')->group(function () {
         Route::get('/register', [RegisteredUserController::class, 'create'])
             ->name('DummyRouteNamePrefixregister');
 
-        Route::post('/register', [RegisteredUserController::class, 'store']);
+        Route::post('/register', [RegisteredUserController::class, 'store'])
+            ->name('DummyRouteNamePrefixregister.submit');
 
         Route::get('/login', [AuthenticatedSessionController::class, 'create'])
             ->name('DummyRouteNamePrefixlogin');
 
-        Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+        Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+            ->name('DummyRouteNamePrefixlogin.submit');
 
         Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
             ->name('DummyRouteNamePrefixpassword.request');
@@ -50,7 +52,8 @@ Route::prefix('DummyRoutePrefix')->group(function () {
         Route::get('/confirm-password', [ConfirmablePasswordController::class, 'show'])
             ->name('DummyRouteNamePrefixpassword.confirm');
 
-        Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']);
+        Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
+            ->name('DummyRouteNamePrefixpassword.confirm.submit');
 
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('DummyRouteNamePrefixlogout');
