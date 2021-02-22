@@ -154,7 +154,6 @@ class BreezeInstallCommand extends Command
         // }
 
         $this->info('Breeze scaffolding installed successfully.');
-        $this->comment('Please execute the "npm install && npm run dev" command to build your assets.');
 
         return 0;
     }
