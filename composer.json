@@ -1,0 +1,29 @@
+{
+    "name": "purcell/breeze-x",
+    "description": "A helper command to scaffold multiple authentication guards on your Laravel project",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Nathan Purcell",
+            "email": "nathan@nathanpurcell.co.uk"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Purcell\\BreezeX\\": "src/app/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Purcell\\BreezeX\\BreezeXServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
