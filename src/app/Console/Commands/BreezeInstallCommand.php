@@ -325,8 +325,8 @@ class BreezeInstallCommand extends Command
             'DummyViewPathPrefix',
             'DummyViewPrefix',
             'DummyModelNamespace',
-            'DummyModel',
             'DummyModelTable',
+            'DummyModel',
         ], [
             $this->guardName,
             $this->brokerName,
@@ -338,8 +338,8 @@ class BreezeInstallCommand extends Command
             $this->viewsPath,
             $this->viewsPrefix,
             $this->modelNamespace,
-            $this->modelName,
             Str::snake(Str::pluralStudly($this->modelName)),
+            $this->modelName,
         ], $contents);
     }
 
