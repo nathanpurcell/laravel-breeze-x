@@ -79,6 +79,13 @@ class BreezeInstallCommand extends Command
     protected $requestPath;
 
     /**
+     * The request namespace.
+     *
+     * @var string
+     */
+    protected $requestNamespace;
+
+    /**
      * The views save path.
      *
      * @var string
@@ -119,13 +126,6 @@ class BreezeInstallCommand extends Command
      * @var string
      */
     protected $routeGuestGuardName;
-
-    /**
-     * The namespace to the EmailVerificationRequest class.
-     *
-     * @var string
-     */
-    protected $emailVerificationRequestClassNamespace;
 
     /**
      * Create a new command instance.
@@ -236,7 +236,7 @@ class BreezeInstallCommand extends Command
             ? ''
             : sprintf(':%s', $this->guardName);
 
-        $this->emailVerificationRequestClassNamespace = ($this->guardName === 'web')
+        $this->requestNamespace = ($this->guardName === 'web')
             ? 'App\Http\Requests\Auth'
             : sprintf('App\Http\Requests\Auth\%s', Str::title($this->guardName));
 
@@ -361,7 +361,7 @@ class BreezeInstallCommand extends Command
             'DummyModelNamespace',
             'DummyModelTable',
             'DummyModel',
-            'DummyEmailVerificationRequestNamespace',
+            'DummyRequestNamespace',
         ], [
             $this->guardName,
             $this->brokerName,
@@ -375,7 +375,7 @@ class BreezeInstallCommand extends Command
             $this->modelNamespace,
             Str::snake(Str::pluralStudly($this->modelName)),
             $this->modelName,
-            $this->emailVerificationRequestClassNamespace,
+            $this->requestNamespace,
         ], $contents);
     }
 

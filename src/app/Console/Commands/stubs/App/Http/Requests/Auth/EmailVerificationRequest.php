@@ -1,6 +1,6 @@
 <?php
 
-namespace DummyEmailVerificationRequestNamespace;
+namespace DummyRequestNamespace;
 
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Http\FormRequest;
