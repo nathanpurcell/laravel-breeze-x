@@ -121,6 +121,13 @@ class BreezeInstallCommand extends Command
     protected $routeGuestGuardName;
 
     /**
+     * The namespace to the EmailVerificationRequest class.
+     *
+     * @var string
+     */
+    protected $emailVerificationRequestClassNamespace;
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -144,6 +151,7 @@ class BreezeInstallCommand extends Command
 
         $this->generateControllers();
         $this->generateRequests();
+        $this->generateMiddlewares();
         $this->generateRoutes();
 
         // if ($this->guardName === 'web') {
@@ -228,6 +236,10 @@ class BreezeInstallCommand extends Command
             ? ''
             : sprintf(':%s', $this->guardName);
 
+        $this->emailVerificationRequestClassNamespace = ($this->guardName === 'web')
+            ? 'App\Http\Requests\Auth'
+            : sprintf('App\Http\Requests\Auth\%s', Str::title($this->guardName));
+
         return true;
     }
 
@@ -265,13 +277,37 @@ class BreezeInstallCommand extends Command
      */
     protected function generateRequests()
     {
-        $requests = ['LoginRequest'];
+        $requests = [
+            'LoginRequest',
+            'EmailVerificationRequest',
+        ];
 
         $this->files->ensureDirectoryExists($this->requestPath);
 
         foreach ($requests as $request) {
             $stubPath = realpath(__DIR__.'/stubs/App/Http/Requests/Auth/'.$request.'.php');
             $savePath = $this->requestPath.$request.'.php';
+            $this->files->put($savePath, $this->buildClass($stubPath));
+        }
+    }
+    /**
+     * Generate middlewares.
+     *
+     * @return void
+     */
+    protected function generateMiddlewares()
+    {
+        $middlewares = [
+            'EnsureEmailIsVerified',
+        ];
+
+        $middlewarePath = app_path('Http/Middleware/');
+
+        $this->files->ensureDirectoryExists($middlewarePath);
+
+        foreach ($middlewares as $middleware) {
+            $stubPath = realpath(__DIR__.'/stubs/App/Http/Middleware/'.$middleware.'.php');
+            $savePath = $middlewarePath.$middleware.'.php';
             $this->files->put($savePath, $this->buildClass($stubPath));
         }
     }
@@ -291,8 +327,6 @@ class BreezeInstallCommand extends Command
             base_path('routes/web.php'),
             $this->buildClass(realpath(__DIR__.'/stubs/routes/web.php'))
         );
-
-        // $this->files->copy(__DIR__.'/stubs/routes/web.php', base_path('routes/web.php'));
     }
 
     /**
@@ -327,6 +361,7 @@ class BreezeInstallCommand extends Command
             'DummyModelNamespace',
             'DummyModelTable',
             'DummyModel',
+            'DummyEmailVerificationRequestNamespace',
         ], [
             $this->guardName,
             $this->brokerName,
@@ -340,6 +375,7 @@ class BreezeInstallCommand extends Command
             $this->modelNamespace,
             Str::snake(Str::pluralStudly($this->modelName)),
             $this->modelName,
+            $this->emailVerificationRequestClassNamespace,
         ], $contents);
     }
 

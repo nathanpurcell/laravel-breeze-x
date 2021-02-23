@@ -30,7 +30,7 @@ class ConfirmablePasswordController extends Controller
     public function store(Request $request)
     {
         if (! Auth::guard('DummyGuardName')->validate([
-            'email' => $request->user()->email,
+            'email' => Auth::guard('DummyGuardName')->user()->email,
             'password' => $request->password,
         ])) {
             throw ValidationException::withMessages([
@@ -38,7 +38,7 @@ class ConfirmablePasswordController extends Controller
             ]);
         }
 
-        $request->session()->put('auth.password_confirmed_at', time());
+        $request->session()->passwordConfirmed();
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
